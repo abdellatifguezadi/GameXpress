@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\Admin\AuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -9,16 +10,16 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('v1')->group(function () {
-    Route::prefix('admin')->group(function () {
 
-        
-        // Protected Routes
-        Route::middleware(['auth:sanctum'])->group(function () {
 
-        });
-    });
+Route::post('V1/Admin/register', [AuthController::class, 'register'])->name('admin.register');
+Route::post('V1/Admin/login', [AuthController::class, 'login'])->name('admin.login');
+
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('V1/Admin/logout', [AuthController::class, 'logout'])->name('admin.logout');
 });
+
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();

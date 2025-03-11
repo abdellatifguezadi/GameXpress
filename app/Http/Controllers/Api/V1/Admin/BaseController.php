@@ -11,7 +11,7 @@ class BaseController extends Controller
      *
      * @param mixed $result
      * @param string $message
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function sendResponse($result, $message)
     {
@@ -30,7 +30,7 @@ class BaseController extends Controller
      * @param string $error
      * @param array $errorMessages
      * @param int $code
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function sendError($error, $errorMessages = [], $code = 404)
     {
