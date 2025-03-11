@@ -17,24 +17,16 @@ class RoleAndPermissionSeeder extends Seeder
         // Reset cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Create permissions
         $permissions = [
-            // Dashboard permissions
             'view_dashboard',
-            
-            // Product permissions
             'view_products',
             'create_products',
             'edit_products',
             'delete_products',
-            
-            // Category permissions
             'view_categories',
             'create_categories',
             'edit_categories',
             'delete_categories',
-            
-            // User permissions
             'view_users',
             'create_users',
             'edit_users',
@@ -45,15 +37,11 @@ class RoleAndPermissionSeeder extends Seeder
             Permission::create(['name' => $permission]);
         }
 
-        // Create roles and assign permissions
-        
-        // Super Admin
-        $superAdminRole = Role::create(['name' => 'super_admin']);
-        $superAdminRole->givePermissionTo(Permission::all());
+        $superAdmin = Role::create(['name' => 'super_admin']);
+        $superAdmin->givePermissionTo(Permission::all());
 
-        // Product Manager
-        $productManagerRole = Role::create(['name' => 'product_manager']);
-        $productManagerRole->givePermissionTo([
+        $productManager = Role::create(['name' => 'product_manager']);
+        $productManager->givePermissionTo([
             'view_dashboard',
             'view_products',
             'create_products',
@@ -62,17 +50,16 @@ class RoleAndPermissionSeeder extends Seeder
             'view_categories',
             'create_categories',
             'edit_categories',
-            'delete_categories',
+            'delete_categories'
         ]);
 
-        // User Manager
-        $userManagerRole = Role::create(['name' => 'user_manager']);
-        $userManagerRole->givePermissionTo([
+        $userManager = Role::create(['name' => 'user_manager']);
+        $userManager->givePermissionTo([
             'view_dashboard',
             'view_users',
             'create_users',
             'edit_users',
-            'delete_users',
+            'delete_users'
         ]);
     }
 }

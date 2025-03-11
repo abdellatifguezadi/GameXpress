@@ -23,19 +23,20 @@ class AuthController extends BaseController
             'password' => Hash::make($request->password),
         ]);
 
-        // Assigner automatiquement le rôle super_admin au premier utilisateur
-        // et product_manager aux utilisateurs suivants
+
         if (User::count() === 1) {
             $user->assignRole('super_admin');
         } else {
-            $user->assignRole('product_manager');
+            $user->assignRole('user_manager');
         }
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return $this->sendResponse([
             'user' => $user,
-            'token' => $token
+            'token' => $token,
+            'roles' => $user->getRoleNames(),
+            'permissions' => $user->getAllPermissions()->pluck('name')
         ], 'User registered successfully');
     }
 
@@ -59,7 +60,9 @@ class AuthController extends BaseController
 
         return $this->sendResponse([
             'user' => $user,
-            'token' => $token
+            'token' => $token,
+            'roles' => $user->getRoleNames(),
+            'permissions' => $user->getAllPermissions()->pluck('name')
         ], 'User logged in successfully');
     }
 
