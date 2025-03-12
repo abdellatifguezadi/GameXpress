@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Notifications\LowStockNotification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Notifications\Notification;
 
 class Product extends Model
 {
@@ -47,4 +49,5 @@ class Product extends Model
     {
         return $this->hasMany(ProductImage::class);
     }
+
 } 

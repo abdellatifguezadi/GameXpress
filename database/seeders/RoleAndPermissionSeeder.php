@@ -6,6 +6,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Illuminate\Support\Facades\DB;
 
 class RoleAndPermissionSeeder extends Seeder
 {
@@ -14,8 +15,9 @@ class RoleAndPermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        // Reset cached roles and permissions
+        
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
+
 
         $permissions = [
             'view_dashboard',

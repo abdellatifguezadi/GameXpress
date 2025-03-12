@@ -29,46 +29,55 @@ Route::middleware(['auth:sanctum'])->group(function () {
         ->name('admin.dashboard');
 
     // Products
-    // Route::get('V1/Admin/products', [ProductController::class, 'index'])
-    //     ->middleware('permission:view_products')
-    //     ->name('admin.products.index');
-    // Route::post('V1/Admin/products', [ProductController::class, 'store'])
-    //     ->middleware('permission:create_products')
-    //     ->name('admin.products.store');
-    // Route::put('V1/Admin/products/{product}', [ProductController::class, 'update'])
-    //     ->middleware('permission:edit_products')
-    //     ->name('admin.products.update');
-    // Route::delete('V1/Admin/products/{product}', [ProductController::class, 'destroy'])
-    //     ->middleware('permission:delete_products')
-    //     ->name('admin.products.destroy');
+    Route::get('V1/Admin/products', [ProductController::class, 'index'])
+        ->middleware('permission:view_products')
+        ->name('admin.products.index');
+    
+    Route::post('V1/Admin/products', [ProductController::class, 'store'])
+        ->middleware('permission:create_products')
+        ->name('admin.products.store');
+    
+    Route::put('V1/Admin/products/{product}', [ProductController::class, 'update'])
+        ->middleware('permission:edit_products')
+        ->name('admin.products.update');
+    
+    Route::delete('V1/Admin/products/{product}', [ProductController::class, 'destroy'])
+        ->middleware('permission:delete_products')
+        ->name('admin.products.destroy');
 
-    // // Categories
-    // Route::get('V1/Admin/categories', [CategoryController::class, 'index'])
-    //     ->middleware('permission:view_categories')
-    //     ->name('admin.categories.index');
-    // Route::post('V1/Admin/categories', [CategoryController::class, 'store'])
-    //     ->middleware('permission:create_categories')
-    //     ->name('admin.categories.store');
-    // Route::put('V1/Admin/categories/{category}', [CategoryController::class, 'update'])
-    //     ->middleware('permission:edit_categories')
-    //     ->name('admin.categories.update');
-    // Route::delete('V1/Admin/categories/{category}', [CategoryController::class, 'destroy'])
-    //     ->middleware('permission:delete_categories')
-    //     ->name('admin.categories.destroy');
+    // Categories
+    Route::get('V1/Admin/categories', [CategoryController::class, 'index'])
+        ->middleware('permission:view_categories')
+        ->name('admin.categories.index');
+    
+    Route::post('V1/Admin/categories', [CategoryController::class, 'store'])
+        ->middleware('permission:create_categories')
+        ->name('admin.categories.store');
+    
+    Route::put('V1/Admin/categories/{category}', [CategoryController::class, 'update'])
+        ->middleware('permission:edit_categories')
+        ->name('admin.categories.update');
+    
+    Route::delete('V1/Admin/categories/{category}', [CategoryController::class, 'destroy'])
+        ->middleware('permission:delete_categories')
+        ->name('admin.categories.destroy');
 
-    // // Users
-    // Route::get('V1/Admin/users', [UserController::class, 'index'])
-    //     ->middleware('permission:view_users')
-    //     ->name('admin.users.index');
-    // Route::post('V1/Admin/users', [UserController::class, 'store'])
-    //     ->middleware('permission:create_users')
-    //     ->name('admin.users.store');
-    // Route::put('V1/Admin/users/{user}', [UserController::class, 'update'])
-    //     ->middleware('permission:edit_users')
-    //     ->name('admin.users.update');
-    // Route::delete('V1/Admin/users/{user}', [UserController::class, 'destroy'])
-    //     ->middleware('permission:delete_users')
-    //     ->name('admin.users.destroy');
+    // Users
+    Route::get('V1/Admin/users', [UserController::class, 'index'])
+        ->middleware('permission:view_users')
+        ->name('admin.users.index');
+    
+    Route::post('V1/Admin/users', [UserController::class, 'store'])
+        ->middleware('permission:create_users')
+        ->name('admin.users.store');
+    
+    Route::put('V1/Admin/users/{user}', [UserController::class, 'update'])
+        ->middleware('permission:edit_users')
+        ->name('admin.users.update');
+    
+    Route::delete('V1/Admin/users/{user}', [UserController::class, 'destroy'])
+        ->middleware('permission:delete_users')
+        ->name('admin.users.destroy');
 });
 
 
