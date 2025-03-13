@@ -32,10 +32,10 @@ class ProductController extends BaseController
             'status' => 'required|in:available,out_of_stock',
             'category_id' => 'required|exists:categories,id',
         ]);
-        
+
         $validatedData['slug'] = Str::slug($validatedData['name']);
         $product = Product::create($validatedData);
-        
+
         return $this->sendResponse($product->load(['category', 'images']), 'Product created successfully');
     }
 
@@ -49,12 +49,12 @@ class ProductController extends BaseController
             'category_id' => 'sometimes|exists:categories,id',
         ]);
 
-        if ($request->has('name')) {
-            $validatedData['slug'] = Str::slug($validatedData['name']);
-        }
-        
+
+        $validatedData['slug'] = Str::slug($validatedData['name']);
+
+
         $product->update($validatedData);
-        
+
         return $this->sendResponse($product->load(['category', 'images']), 'Product updated successfully');
     }
 
