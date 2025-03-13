@@ -30,6 +30,14 @@ class ProductImage extends Model
         'is_primary' => 'boolean',
     ];
 
+    public function setIsPrimaryAttribute($value)
+    {
+        if ($value) {
+            ProductImage::where('product_id', $this->product_id)
+                ->update(['is_primary' => false]);
+        }
+        $this->attributes['is_primary'] = $value;
+    }
 
     public function product(): BelongsTo
     {
