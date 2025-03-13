@@ -53,8 +53,7 @@ class ProductImageTest extends TestCase
     public function test_can_set_primary_image()
     {
         $product = Product::factory()->create();
-        
-        // Create multiple images for the same product
+
         $image1 = ProductImage::factory()->create([
             'product_id' => $product->id,
             'is_primary' => true
@@ -65,11 +64,9 @@ class ProductImageTest extends TestCase
             'is_primary' => false
         ]);
 
-        // Set image2 as primary
         $image2->is_primary = true;
         $image2->save();
 
-        // Refresh both models from database
         $image1->refresh();
         $image2->refresh();
 
