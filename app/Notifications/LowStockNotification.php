@@ -2,38 +2,43 @@
 
 namespace App\Notifications;
 
+use App\Models\Product;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class LowStockNotification extends Notification
 {
     use Queueable;
 
-    protected $lowStockProducts;
+    protected $product;
 
-    public function __construct($lowStockProducts)
+    public function __construct(Product $product)
     {
-        $this->lowStockProducts = $lowStockProducts;
+        $this->product = $product;
     }
 
-    public function via($notifiable): array
+    public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
-    public function toMail($notifiable): MailMessage
+    public function toMail(object $notifiable): MailMessage
     {
-        $message = (new MailMessage)
-            ->subject('Alert: Low Stock Products')
-            ->line('The following products are running low on stock:');
+        return (new MailMessage)
+            ->subject('Low Stock Alert')
+            ->line('The product ' . $this->product->name . ' is running low on stock.')
+            ->line('Current stock: ' . $this->product->stock)
+            ->action('View Product', url('/products/' . $this->product->id))
+            ->line('Please restock soon!');
+    }
 
-        foreach ($this->lowStockProducts as $product) {
-            $message->line("- {$product['name']} (Stock: {$product['stock']})");
-        }
-
-        return $message
-            ->line('Please review and restock these products as needed.')
-            ->action('View Dashboard', url('/admin/dashboard'));
+    public function toArray(object $notifiable): array
+    {
+        return [
+            'product_id' => $this->product->id,
+            'product_name' => $this->product->name,
+            'current_stock' => $this->product->stock
+        ];
     }
 } 

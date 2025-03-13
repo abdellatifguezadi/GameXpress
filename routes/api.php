@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\Admin\DashboardController;
 use App\Http\Controllers\Api\V1\Admin\ProductController;
 use App\Http\Controllers\Api\V1\Admin\CategoryController;
 use App\Http\Controllers\Api\V1\Admin\UserController;
+use App\Http\Controllers\Api\V1\Admin\ProductImageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,73 +15,37 @@ use App\Http\Controllers\Api\V1\Admin\UserController;
 |--------------------------------------------------------------------------
 */
 
-
-
+// Auth Routes
 Route::post('V1/Admin/register', [AuthController::class, 'register'])->name('admin.register');
 Route::post('V1/Admin/login', [AuthController::class, 'login'])->name('admin.login');
 
+// Protected Routes
+Route::middleware(['auth:sanctum'])
+    ->prefix('V1/Admin')
+    ->name('admin.')
+    ->group(function () {
+        Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::middleware(['auth:sanctum'])->group(function () {
-    Route::post('V1/Admin/logout', [AuthController::class, 'logout'])->name('admin.logout');
+        // Dashboard
+        Route::get('dashboard', [DashboardController::class, 'index'])
+            ->middleware('permission:view_dashboard')
+            ->name('dashboard');
 
-    // Dashboard
-    Route::get('V1/Admin/dashboard', [DashboardController::class, 'index'])
-        ->middleware('permission:view_dashboard')
-        ->name('admin.dashboard');
+        // Products
+        Route::apiResource('products', ProductController::class)->except('show');
+        
+        // Product Images
+        Route::get('products/{product}/images', [ProductImageController::class, 'index'])->name('products.images.index');
+        Route::post('products/{product}/images', [ProductImageController::class, 'store'])->name('products.images.store');
+        Route::delete('products/{product}/images/{image}', [ProductImageController::class, 'destroy'])->name('products.images.destroy');
+        Route::post('products/{product}/images/{image}/set-primary', [ProductImageController::class, 'setPrimary'])->name('products.images.setPrimary');
 
-    // Products
-    Route::get('V1/Admin/products', [ProductController::class, 'index'])
-        ->middleware('permission:view_products')
-        ->name('admin.products.index');
-    
-    Route::post('V1/Admin/products', [ProductController::class, 'store'])
-        ->middleware('permission:create_products')
-        ->name('admin.products.store');
-    
-    Route::put('V1/Admin/products/{product}', [ProductController::class, 'update'])
-        ->middleware('permission:edit_products')
-        ->name('admin.products.update');
-    
-    Route::delete('V1/Admin/products/{product}', [ProductController::class, 'destroy'])
-        ->middleware('permission:delete_products')
-        ->name('admin.products.destroy');
+        // Categories
+        // Route::apiResource('categories', CategoryController::class);
 
-    // Categories
-    Route::get('V1/Admin/categories', [CategoryController::class, 'index'])
-        ->middleware('permission:view_categories')
-        ->name('admin.categories.index');
-    
-    Route::post('V1/Admin/categories', [CategoryController::class, 'store'])
-        ->middleware('permission:create_categories')
-        ->name('admin.categories.store');
-    
-    Route::put('V1/Admin/categories/{category}', [CategoryController::class, 'update'])
-        ->middleware('permission:edit_categories')
-        ->name('admin.categories.update');
-    
-    Route::delete('V1/Admin/categories/{category}', [CategoryController::class, 'destroy'])
-        ->middleware('permission:delete_categories')
-        ->name('admin.categories.destroy');
-
-    // Users
-    Route::get('V1/Admin/users', [UserController::class, 'index'])
-        ->middleware('permission:view_users')
-        ->name('admin.users.index');
-    
-    Route::post('V1/Admin/users', [UserController::class, 'store'])
-        ->middleware('permission:create_users')
-        ->name('admin.users.store');
-    
-    Route::put('V1/Admin/users/{user}', [UserController::class, 'update'])
-        ->middleware('permission:edit_users')
-        ->name('admin.users.update');
-    
-    Route::delete('V1/Admin/users/{user}', [UserController::class, 'destroy'])
-        ->middleware('permission:delete_users')
-        ->name('admin.users.destroy');
-});
-
-
+        // Users
+        // Route::apiResource('users', UserController::class);
+    });
 
 Route::get('/user', function (Request $request) {
     return ['message' => 'You are authenticated'];
