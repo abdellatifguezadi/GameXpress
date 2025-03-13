@@ -9,10 +9,10 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductImageController extends BaseController
 {
-    public function __construct()
-    {
-        $this->authorizeResource(ProductImage::class, 'image');
-    }
+    // public function __construct()
+    // {
+    //     $this->authorizeResource(ProductImage::class, 'image');
+    // }
 
     public function index(Product $product)
     {
@@ -32,11 +32,10 @@ class ProductImageController extends BaseController
 
         $images = [];
         if ($request->hasFile('images')) {
-            if ($request->boolean('is_primary')) {
-                ProductImage::where('product_id', $product->id)
-                    ->where('is_primary', true)
-                    ->update(['is_primary' => false]);
-            }
+            // Vérifier s'il existe déjà une image primaire pour ce produit
+            $hasPrimaryImage = ProductImage::where('product_id', $product->id)
+                ->where('is_primary', true)
+                ->exists();
 
             foreach ($request->file('images') as $key => $image) {
                 $filename = time() . '_' . $image->getClientOriginalName();
@@ -45,7 +44,11 @@ class ProductImageController extends BaseController
                 $productImage = ProductImage::create([
                     'image_url' => $path,
                     'product_id' => $product->id,
-                    'is_primary' => $key === 0 && $request->boolean('is_primary', false)
+                    // Si is_primary est spécifié dans la requête, utiliser cette valeur
+                    // Sinon, mettre true pour la première image s'il n'y a pas déjà une image primaire
+                    'is_primary' => $request->has('is_primary') 
+                        ? $request->boolean('is_primary') 
+                        : ($key === 0 && !$hasPrimaryImage)
                 ]);
 
                 $images[] = $productImage;
@@ -73,6 +76,7 @@ class ProductImageController extends BaseController
 
         $image->delete();
 
+      
         if ($image->is_primary) {
             $firstImage = ProductImage::where('product_id', $product->id)->first();
             if ($firstImage) {
@@ -89,12 +93,12 @@ class ProductImageController extends BaseController
             return $this->sendError('Image does not belong to this product', [], 403);
         }
 
-        ProductImage::where('product_id', $product->id)
-            ->where('is_primary', true)
-            ->update(['is_primary' => false]);
+        if ($image->is_primary) {
+            return $this->sendResponse($image, 'Image is already primary');
+        }
 
         $image->update(['is_primary' => true]);
-
+        
         return $this->sendResponse($image, 'Primary image set successfully');
     }
 } 

@@ -8,14 +8,11 @@ use Illuminate\Support\Str;
 
 class ProductController extends BaseController
 {
-    public function __construct()
-    {
-        $this->middleware('auth:sanctum');
-        $this->middleware('can:view_products')->only(['index', 'show']);
-        $this->middleware('can:create_products')->only(['store']);
-        $this->middleware('can:edit_products')->only(['update']);
-        $this->middleware('can:delete_products')->only(['destroy']);
-    }
+    // public function __construct()
+    // {
+    //     // $this->middleware('auth:sanctum');
+    //     // $this->authorizeResource(Product::class, 'product');
+    // }
 
     public function index()
     {
