@@ -7,6 +7,7 @@ use App\Models\Product;
 use App\Models\ProductImage;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Illuminate\Support\Str;
 
 class ProductTest extends TestCase
 {
@@ -18,17 +19,20 @@ class ProductTest extends TestCase
         
         $productData = [
             'name' => 'Test Product',
-            'slug' => 'test-product',
+            // 'slug' => 'test-product',
             'price' => 99.99,
             'stock' => 10,
             'status' => 'available',
             'category_id' => $category->id
         ];
 
+        $productData['slug'] = Str::slug($productData['name']);  
+
         $product = Product::create($productData);
 
         $this->assertDatabaseHas('products', $productData);
         $this->assertEquals('Test Product', $product->name);
+        $this->assertEquals('test-product', $product->slug);
         $this->assertEquals(99.99, $product->price);
         $this->assertEquals(10, $product->stock);
     }

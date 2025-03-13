@@ -40,9 +40,7 @@ Route::middleware(['auth:sanctum'])
         Route::get('products/{product}', [ProductController::class, 'show'])->middleware('permission:view_products')->name('products.show');
 
         // Product Images
-        Route::get('products/{product}/images', [ProductImageController::class, 'index'])->middleware('permission:view_products')->name('products.images.index');
-        Route::post('products/{product}/images', [ProductImageController::class, 'store'])->middleware('permission:edit_products')->name('products.images.store');
-        Route::delete('products/{product}/images/{image}', [ProductImageController::class, 'destroy'])->middleware('permission:edit_products')->name('products.images.destroy');
+
         Route::post('products/{product}/images/{image}/set-primary', [ProductImageController::class, 'setPrimary'])->middleware('permission:edit_products')->name('products.images.set_primary');
 
         // Categories
