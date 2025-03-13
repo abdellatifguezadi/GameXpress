@@ -9,11 +9,7 @@ use Illuminate\Support\Str;
 
 class CategoryController extends BaseController
 {
-    // public function __construct()
-    // {
-    //     $this->middleware('auth:sanctum');
-    //     $this->authorizeResource(Category::class, 'category');
-    // }
+
 
     public function index()
     {
