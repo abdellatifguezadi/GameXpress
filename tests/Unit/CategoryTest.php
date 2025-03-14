@@ -38,4 +38,33 @@ class CategoryTest extends TestCase
         $this->assertCount(1, $category->products);
         $this->assertInstanceOf(Product::class, $category->products->first());
     }
+
+    public function test_can_update_category()
+    {
+        $category = Category::factory()->create([
+            'name' => 'Old Category'
+        ]);
+
+        $updateData = [
+            'name' => 'Updated Category',
+            'slug' => Str::slug('Updated Category')  
+        ];
+
+        $category->update($updateData);
+        $category->refresh();
+
+        $this->assertEquals('Updated Category', $category->name);
+        $this->assertEquals('updated-category', $category->slug);
+    }
+
+    public function test_can_delete_category()
+    {
+        $category = Category::factory()->create();
+        
+        $category->delete();
+
+        $this->assertDatabaseMissing('categories', [
+            'id' => $category->id
+        ]);
+    }
 }

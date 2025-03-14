@@ -80,4 +80,40 @@ class ProductTest extends TestCase
         $this->assertIsInt($product->stock);
         $this->assertEquals(10, $product->stock);
     }
+
+    public function test_can_update_product()
+    {
+        $product = Product::factory()->create([
+            'name' => 'Old Name',
+            'price' => '99.99'
+        ]);
+
+        $updateData = [
+            'name' => 'Updated Name',
+            'price' => '149.99',
+            'slug' => Str::slug('Updated Name')  
+        ];
+
+        $product->update($updateData);
+        $product->refresh();
+
+        $this->assertEquals('Updated Name', $product->name);
+        $this->assertEquals('149.99', $product->price);
+        $this->assertEquals('updated-name', $product->slug);
+    }
+
+    public function test_can_restore_deleted_product()
+    {
+        $product = Product::factory()->create();
+        $product->delete();
+
+        $this->assertSoftDeleted($product);
+
+        $product->restore();
+        
+        $this->assertDatabaseHas('products', [
+            'id' => $product->id,
+            'deleted_at' => null
+        ]);
+    }
 }
