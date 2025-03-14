@@ -36,7 +36,8 @@ class UserController extends BaseController
         return $this->sendResponse($user, 'User retrieved successfully.');
     }
 
-    public function update(Request $request, User $user){
+    public function update(Request $request, User $user)
+    {
 
         $validatedData = $request->validate([
             'name' => 'sometimes | string',
@@ -47,7 +48,6 @@ class UserController extends BaseController
         $user->update($validatedData);
 
         return $this->sendResponse($user, 'User updated successfully.');
-
     }
 
     public function destroy(User $user)
@@ -56,4 +56,10 @@ class UserController extends BaseController
         return $this->sendResponse([], 'User deleted successfully.');
     }
 
+    public function restore(Request $request, $id)
+    {
+        $user = User::withTrashed()->findOrFail($id);
+        $user->restore();
+        return $this->sendResponse($user, 'User restored successfully.');
+    }
 }

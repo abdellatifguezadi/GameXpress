@@ -25,21 +25,27 @@ class ProductController extends BaseController
             'stock' => 'required|integer|min:0',
             'status' => 'required|in:available,out_of_stock',
             'category_id' => 'required|exists:categories,id',
-            'images.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
+            'images.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'primary_image_index' => 'nullable|integer|min:0'
         ]);
 
         $validatedData['slug'] = Str::slug($validatedData['name']);
         $product = Product::create($validatedData);
 
-       
+        $primaryImageIndex = $request->has('primary_image_index') ? (int) $request->primary_image_index : 0;
+
         if ($request->hasFile('images')) {
+            if ($primaryImageIndex >= count($request->file('images'))) {
+                $primaryImageIndex = 0;
+            }
+
             foreach ($request->file('images') as $key => $image) {
                 $filename = time() . '_' . $image->getClientOriginalName();
                 $path = $image->storeAs('products', $filename, 'public');
-                
+
                 $product->images()->create([
                     'image_url' => $path,
-                    'is_primary' => $key === 0 
+                    'is_primary' => $key === $primaryImageIndex
                 ]);
             }
         }
@@ -57,7 +63,8 @@ class ProductController extends BaseController
             'category_id' => 'sometimes|exists:categories,id',
             'images.*' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
             'delete_images' => 'sometimes|array',
-            'delete_images.*' => 'exists:product_images,id'
+            'delete_images.*' => 'exists:product_images,id',
+            'primary_image_index' => 'nullable|integer|min:0'
         ]);
 
         if (isset($validatedData['name'])) {
@@ -70,11 +77,8 @@ class ProductController extends BaseController
             foreach ($request->delete_images as $imageId) {
                 $image = $product->images()->find($imageId);
                 if ($image) {
-                    
                     $isPrimary = $image->is_primary;
-
                     Storage::disk('public')->delete($image->image_url);
-
                     $image->delete();
 
                     if ($isPrimary) {
@@ -89,14 +93,20 @@ class ProductController extends BaseController
 
         if ($request->hasFile('images')) {
             $hasPrimaryImage = $product->images()->where('is_primary', true)->exists();
-            
+
+            $primaryImageIndex = $request->has('primary_image_index') ? (int) $request->primary_image_index : 0;
+
+            if ($primaryImageIndex >= count($request->file('images'))) {
+                $primaryImageIndex = 0;
+            }
+
             foreach ($request->file('images') as $key => $image) {
                 $filename = time() . '_' . $image->getClientOriginalName();
                 $path = $image->storeAs('products', $filename, 'public');
-                
+
                 $product->images()->create([
                     'image_url' => $path,
-                    'is_primary' => !$hasPrimaryImage && $key === 0 
+                    'is_primary' => ($key === $primaryImageIndex && !$hasPrimaryImage) || (!$hasPrimaryImage && $key === 0)
                 ]);
             }
         }
@@ -113,5 +123,12 @@ class ProductController extends BaseController
     {
         $product->delete();
         return $this->sendResponse(null, 'Product deleted successfully');
+    }
+
+    public function restore(Request $request, $id)
+    {
+        $product = Product::withTrashed()->findOrFail($id);
+        $product->restore();
+        return $this->sendResponse($product, 'Product restored successfully');
     }
 }

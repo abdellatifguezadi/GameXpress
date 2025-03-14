@@ -38,6 +38,7 @@ Route::middleware(['auth:sanctum'])
         Route::put('products/{product}', [ProductController::class, 'update'])->middleware('permission:edit_products')->name('products.update');
         Route::delete('products/{product}', [ProductController::class, 'destroy'])->middleware('permission:delete_products')->name('products.destroy');
         Route::get('products/{product}', [ProductController::class, 'show'])->middleware('permission:view_products')->name('products.show');
+        Route::post('products/{product}/restore', [ProductController::class, 'restore'])->middleware('permission:delete_products')->name('products.restore');
 
         // Product Images
 
@@ -59,6 +60,7 @@ Route::middleware(['auth:sanctum'])
         Route::put('users/{user}', [UserController::class, 'update'])->middleware('permission:edit_users')->name('users.update');
         Route::delete('users/{user}', [UserController::class, 'destroy'])->middleware('permission:delete_users')->name('users.destroy');
         Route::get('users/{user}', [UserController::class, 'show'])->middleware('permission:view_users')->name('users.show');
+        Route::post('users/{user}/restore', [UserController::class, 'restore'])->middleware('permission:delete_users')->name('users.restore');
     });
 
 Route::get('/user', function (Request $request) {
