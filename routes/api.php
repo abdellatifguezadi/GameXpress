@@ -50,7 +50,7 @@ Route::middleware(['auth:sanctum'])
         Route::put('categories/{category}', [CategoryController::class, 'update'])->middleware('permission:edit_categories')->name('categories.update');
         Route::delete('categories/{category}', [CategoryController::class, 'destroy'])->middleware('permission:delete_categories')->name('categories.destroy');
         Route::get('categories/{category}', [CategoryController::class, 'show'])->middleware('permission:view_categories')->name('categories.show');
-        
+
 
         // Users
         // Route::apiResource('users', UserController::class);
