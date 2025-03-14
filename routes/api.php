@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\V1\Admin\ProductController;
 use App\Http\Controllers\Api\V1\Admin\CategoryController;
 use App\Http\Controllers\Api\V1\Admin\UserController;
 use App\Http\Controllers\Api\V1\Admin\ProductImageController;
+use App\Http\Controllers\Api\V1\Admin\RoleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,39 +29,45 @@ Route::middleware(['auth:sanctum'])
 
         // Dashboard
         Route::get('dashboard', [DashboardController::class, 'index'])
-            ->middleware('permission:view_dashboard')
+            ->middleware('role:super_admin|product_manager|user_manager')
             ->name('dashboard');
 
         // Products
         // Route::apiResource('products', ProductController::class)->except('show');
-        Route::get('products', [ProductController::class, 'index'])->middleware('permission:view_products')->name('products.index');
-        Route::post('products', [ProductController::class, 'store'])->middleware('permission:create_products')->name('products.store');
-        Route::put('products/{product}', [ProductController::class, 'update'])->middleware('permission:edit_products')->name('products.update');
-        Route::delete('products/{product}', [ProductController::class, 'destroy'])->middleware('permission:delete_products')->name('products.destroy');
-        Route::get('products/{product}', [ProductController::class, 'show'])->middleware('permission:view_products')->name('products.show');
-        Route::post('products/{product}/restore', [ProductController::class, 'restore'])->middleware('permission:delete_products')->name('products.restore');
+        Route::get('products', [ProductController::class, 'index'])->middleware('role:super_admin|product_manager')->name('products.index');
+        Route::post('products', [ProductController::class, 'store'])->middleware('role:super_admin|product_manager')->name('products.store');
+        Route::put('products/{product}', [ProductController::class, 'update'])->middleware('role:super_admin|product_manager')->name('products.update');
+        Route::delete('products/{product}', [ProductController::class, 'destroy'])->middleware('role:super_admin|product_manager')->name('products.destroy');
+        Route::get('products/{product}', [ProductController::class, 'show'])->middleware('role:super_admin|product_manager')->name('products.show');
+        Route::post('products/{product}/restore', [ProductController::class, 'restore'])->middleware('role:super_admin|product_manager')->name('products.restore');
 
         // Product Images
 
-        Route::post('products/{product}/images/{image}/set-primary', [ProductImageController::class, 'setPrimary'])->middleware('permission:edit_products')->name('products.images.set_primary');
+        Route::post('products/{product}/images/{image}/set-primary', [ProductImageController::class, 'setPrimary'])->middleware('role:super_admin|product_manager')->name('products.images.set_primary');
 
         // Categories
         // Route::apiResource('categories', CategoryController::class);
-        Route::get('categories', [CategoryController::class, 'index'])->middleware('permission:view_categories')->name('categories.index');
-        Route::post('categories', [CategoryController::class, 'store'])->middleware('permission:create_categories')->name('categories.store');
-        Route::put('categories/{category}', [CategoryController::class, 'update'])->middleware('permission:edit_categories')->name('categories.update');
-        Route::delete('categories/{category}', [CategoryController::class, 'destroy'])->middleware('permission:delete_categories')->name('categories.destroy');
-        Route::get('categories/{category}', [CategoryController::class, 'show'])->middleware('permission:view_categories')->name('categories.show');
+        Route::get('categories', [CategoryController::class, 'index'])->middleware('role:super_admin|product_manager')->name('categories.index');
+        Route::post('categories', [CategoryController::class, 'store'])->middleware('role:super_admin|product_manager')->name('categories.store');
+        Route::put('categories/{category}', [CategoryController::class, 'update'])->middleware('role:super_admin|product_manager')->name('categories.update');
+        Route::delete('categories/{category}', [CategoryController::class, 'destroy'])->middleware('role:super_admin|product_manager')->name('categories.destroy');
+        Route::get('categories/{category}', [CategoryController::class, 'show'])->middleware('role:super_admin|product_manager')->name('categories.show');
 
 
         // Users
         // Route::apiResource('users', UserController::class);
-        Route::get('users', [UserController::class, 'index'])->middleware('permission:view_users')->name('users.index');
-        Route::post('users', [UserController::class, 'store'])->middleware('permission:create_users')->name('users.store');
-        Route::put('users/{user}', [UserController::class, 'update'])->middleware('permission:edit_users')->name('users.update');
-        Route::delete('users/{user}', [UserController::class, 'destroy'])->middleware('permission:delete_users')->name('users.destroy');
-        Route::get('users/{user}', [UserController::class, 'show'])->middleware('permission:view_users')->name('users.show');
-        Route::post('users/{user}/restore', [UserController::class, 'restore'])->middleware('permission:delete_users')->name('users.restore');
+        Route::get('users', [UserController::class, 'index'])->middleware('role:super_admin|user_manager')->name('users.index');
+        Route::post('users', [UserController::class, 'store'])->middleware('role:super_admin|user_manager')->name('users.store');
+        Route::put('users/{user}', [UserController::class, 'update'])->middleware('role:super_admin|user_manager')->name('users.update');
+        Route::delete('users/{user}', [UserController::class, 'destroy'])->middleware('role:super_admin|user_manager')->name('users.destroy');
+        Route::get('users/{user}', [UserController::class, 'show'])->middleware('role:super_admin|user_manager')->name('users.show');
+        Route::post('users/{user}/restore', [UserController::class, 'restore'])->middleware('role:super_admin|user_manager')->name('users.restore');
+        Route::put('users/{user}/role', [UserController::class, 'updateRole'])->middleware('role:super_admin')->name('users.update-role');
+
+        // Roles routes
+        Route::get('roles', [RoleController::class, 'index'])
+            ->middleware('role:super_admin')
+            ->name('roles.index');
     });
 
 Route::get('/user', function (Request $request) {

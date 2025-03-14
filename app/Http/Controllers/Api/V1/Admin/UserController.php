@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class UserController extends BaseController
 {
@@ -61,5 +62,25 @@ class UserController extends BaseController
         $user = User::withTrashed()->findOrFail($id);
         $user->restore();
         return $this->sendResponse($user, 'User restored successfully.');
+    }
+
+    public function updateRole(Request $request, $id)
+    {
+        $user = User::find($id);
+        
+        if (!$user) {
+            return $this->sendError('User not found', 'The requested user does not exist', 404);
+        }
+
+        $request->validate([
+            'role' => 'required|in:super_admin,g,user_manager'
+        ]);
+
+        $user->syncRoles([$request->role]);
+
+        return $this->sendResponse(
+            $user->load('roles'),
+            'Role updated successfully'
+        );
     }
 }
