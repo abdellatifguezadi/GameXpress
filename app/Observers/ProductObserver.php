@@ -21,9 +21,8 @@ class ProductObserver
      */
     public function updated(Product $product): void
     {
-        // Vérifie si le stock a été modifié et est inférieur à 5
+       
         if ($product->wasChanged('stock') && $product->stock < 5) {
-            // Notifier tous les admins
             $admins = User::role(['super_admin', 'product_manager'])->get();
             foreach ($admins as $admin) {
                 $admin->notify(new LowStockNotification($product));
