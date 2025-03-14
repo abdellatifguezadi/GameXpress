@@ -22,9 +22,9 @@ class CategoryController extends BaseController
         $validateData = $request->validate([
             'name' =>  'required|string|max:255',
         ]);
-
-        $category = Category::create($validateData);
         $validateData['slug'] = Str::slug($validateData['name']);
+        $category = Category::create($validateData);
+        
         return $this->sendResponse($category, 'Category created successfully.');
     }
 
@@ -33,10 +33,12 @@ class CategoryController extends BaseController
         $validateData = $request->validate([
             'name' => 'required|string|max:255',
         ]);
+
+        $validateData['slug'] = Str::slug($validateData['name']);
         $category->update($validateData);
 
 
-        $validateData['slug'] = Str::slug($validateData['name']);
+        
 
 
         return $this->sendResponse($category, 'Category updated successfully.');

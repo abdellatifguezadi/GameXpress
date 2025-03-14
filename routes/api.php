@@ -54,6 +54,11 @@ Route::middleware(['auth:sanctum'])
 
         // Users
         // Route::apiResource('users', UserController::class);
+        Route::get('users', [UserController::class, 'index'])->middleware('permission:view_users')->name('users.index');
+        Route::post('users', [UserController::class, 'store'])->middleware('permission:create_users')->name('users.store');
+        Route::put('users/{user}', [UserController::class, 'update'])->middleware('permission:edit_users')->name('users.update');
+        Route::delete('users/{user}', [UserController::class, 'destroy'])->middleware('permission:delete_users')->name('users.destroy');
+        Route::get('users/{user}', [UserController::class, 'show'])->middleware('permission:view_users')->name('users.show');
     });
 
 Route::get('/user', function (Request $request) {
